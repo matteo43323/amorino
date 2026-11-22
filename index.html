@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calendario dell'Avvento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --verde: #14532d;
+    --verde-scuro: #0a2d18;
+    --rosso: #b3122b;
+    --rosso-scuro: #7a0c1d;
+    --rosa: #f4a6b8;
+    --oro: #f1d08a;
+    --oro-scuro: #b98a3e;
+    --crema: #fff8ea;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--crema);
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(179, 18, 43, .35) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 100%, rgba(241, 208, 138, .15) 0%, transparent 50%),
+      linear-gradient(180deg, #1f6b43 0%, var(--verde) 45%, var(--verde-scuro) 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  #fx { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
+
+  /* Luci natalizie colorate */
+  .luci {
+    position: fixed; top: 0; left: 0; right: 0; height: 50px;
+    display: flex; justify-content: space-around; z-index: 3;
+    pointer-events: none;
+  }
+  .luci::before {
+    content: ''; position: absolute; top: 9px; left: 0; right: 0; height: 2px;
+    background: #2b2b2b;
+  }
+  .luci span {
+    width: 13px; height: 20px; margin-top: 10px;
+    border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+    animation: lampeggia 2s infinite;
+  }
+  .luci span:nth-child(4n+1) { background: #ff3b3b; box-shadow: 0 0 14px 4px #ff3b3b; }
+  .luci span:nth-child(4n+2) { background: var(--oro); box-shadow: 0 0 14px 4px var(--oro); animation-delay: .5s; }
+  .luci span:nth-child(4n+3) { background: #3bd16f; box-shadow: 0 0 14px 4px #3bd16f; animation-delay: 1s; }
+  .luci span:nth-child(4n+4) { background: #4aa3ff; box-shadow: 0 0 14px 4px #4aa3ff; animation-delay: 1.5s; }
+  @keyframes lampeggia { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+
+  main {
+    position: relative; z-index: 2;
+    width: 100%; max-width: 900px;
+    padding: 80px 20px 60px;
+    text-align: center;
+  }
+
+  h1 {
+    font-family: 'Great Vibes', cursive;
+    font-weight: 400;
+    font-size: clamp(2.8rem, 9vw, 5.5rem);
+    line-height: 1.1;
+    background: linear-gradient(180deg, #fff1c9 0%, var(--oro) 45%, var(--oro-scuro) 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 3px 0 rgba(122, 12, 29, .9)) drop-shadow(0 0 18px rgba(241, 208, 138, .35));
+  }
+  h1 .albero { font-size: .6em; -webkit-text-fill-color: initial; filter: none; }
+
+  .divisore {
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    margin: 10px auto 16px; max-width: 320px; color: var(--crema);
+    letter-spacing: .3em;
+  }
+  .divisore::before, .divisore::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--oro));
+  }
+  .divisore::after { transform: scaleX(-1); }
+  .divisore .cuore { color: #e0607e; letter-spacing: 0; animation: batte 1.8s ease-in-out infinite; }
+  @keyframes batte { 0%,100% { transform: scale(1); } 15% { transform: scale(1.3); } 30% { transform: scale(1); } }
+
+  .giorno {
+    display: inline-block;
+    margin-bottom: 26px;
+    padding: 6px 38px 10px;
+    font-family: 'Great Vibes', cursive;
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    color: var(--crema);
+    background: linear-gradient(135deg, var(--rosso), var(--rosso-scuro));
+    border-radius: 999px;
+    border: 3px dashed var(--crema);
+    box-shadow: 0 0 0 3px var(--oro), 0 8px 24px rgba(0,0,0,.45);
+  }
+
+  /* Cornice: bastoncino di zucchero + filo oro */
+  .cornice {
+    position: relative;
+    padding: 12px;
+    border-radius: 22px;
+    background: repeating-linear-gradient(45deg,
+      var(--rosso) 0 18px, var(--crema) 18px 36px);
+    box-shadow:
+      0 0 0 4px var(--oro),
+      0 0 50px 6px rgba(241, 208, 138, .22),
+      0 22px 60px rgba(0,0,0,.55);
+  }
+  .cornice::before, .cornice::after {
+    position: absolute; font-size: 2rem; z-index: 5;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,.5));
+  }
+  .cornice::before { content: '🎀'; top: -20px; left: -12px; }
+  .cornice::after { content: '⭐'; bottom: -18px; right: -12px; animation: batte 2.4s ease-in-out infinite; }
+  .schermo {
+    position: relative;
+    border-radius: 12px; overflow: hidden;
+    background: #000;
+    aspect-ratio: 16 / 9;
+  }
+  video { width: 100%; height: 100%; display: block; object-fit: contain; background: #000; }
+
+  .audio-btn {
+    position: absolute; right: 14px; bottom: 14px; z-index: 4;
+    border: 0; cursor: pointer;
+    padding: 10px 20px; border-radius: 999px;
+    font: 500 1.1rem 'Cormorant Garamond', serif;
+    background: var(--oro); color: var(--rosso-scuro);
+    box-shadow: 0 4px 16px rgba(0,0,0,.45);
+    transition: transform .15s;
+  }
+  .audio-btn:hover { transform: scale(1.06); }
+  .audio-btn[hidden] { display: none; }
+
+  .dedica {
+    margin-top: 32px;
+    font-family: 'Great Vibes', cursive;
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    color: var(--oro);
+    text-shadow: 0 2px 0 var(--rosso-scuro), 0 0 20px rgba(241, 208, 138, .35);
+  }
+  .firma { margin-top: 4px; font-style: italic; font-size: 1.15rem; opacity: .9; }
+
+  /* Cumulo di neve in basso */
+  .collina {
+    position: fixed; bottom: 0; left: 0; right: 0; height: 70px; z-index: 1;
+    background: radial-gradient(ellipse at 50% 100%, #fff 0 60%, transparent 61%);
+    background-size: 220px 70px;
+    opacity: .95; pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="luci" id="luci"></div>
+<canvas id="fx"></canvas>
+<div class="collina"></div>
+
+<main>
+  <h1><span class="albero">🎄</span> Calendario dell'Avvento <span class="albero">🎄</span></h1>
+  <div class="divisore">❄ <span class="cuore">❤</span> ❄</div>
+  <div class="giorno" id="giorno">Giorno 3</div>
+
+  <div class="cornice">
+    <div class="schermo">
+      <!-- Metti qui il tuo video: carica il file accanto a index.html e chiamalo video.mp4 -->
+      <video id="video" src="video.mp4" autoplay muted loop playsinline controls></video>
+      <button class="audio-btn" id="audio" type="button" hidden>🔊 Attiva l'audio</button>
+    </div>
+  </div>
+
+  <p class="dedica" id="dedica">Ti amo</p>
+  <p class="firma">✨ Buon Natale ✨</p>
+</main>
+
+<script>
+  /* ====== CONFIGURAZIONE ======
+     GIORNO: il giorno da mostrare. Puoi anche usare l'indirizzo: tuosito.it/?giorno=7
+     DEDICA: la frase sotto il video, cambiala come vuoi. */
+  const GIORNO = 3;
+  const DEDICA = "Ti amo";
+
+  const params = new URLSearchParams(location.search);
+  const giorno = parseInt(params.get('giorno'), 10) || GIORNO;
+  document.getElementById('giorno').textContent = 'Giorno ' + giorno;
+  document.getElementById('dedica').textContent = DEDICA;
+  document.title = "Calendario dell'Avvento – Giorno " + giorno;
+
+  /* ====== VIDEO ======
+     Parte da solo senza audio (regola dei browser); il tasto attiva il sonoro. */
+  const video = document.getElementById('video');
+  const btnAudio = document.getElementById('audio');
+  const avvia = video.play();
+  if (avvia && avvia.catch) avvia.catch(() => {});
+  btnAudio.hidden = false;
+  btnAudio.addEventListener('click', () => {
+    video.muted = false;
+    video.currentTime = 0;
+    video.play();
+    btnAudio.hidden = true;
+  });
+
+  /* ====== LUCI ====== */
+  const luci = document.getElementById('luci');
+  const n = Math.ceil(innerWidth / 55);
+  for (let i = 0; i < n; i++) luci.appendChild(document.createElement('span'));
+
+  /* ====== NEVE + QUALCHE CUORE ====== */
+  const c = document.getElementById('fx');
+  const ctx = c.getContext('2d');
+  let fiocchi = [], cuori = [];
+
+  function nuovoCuore(inizio) {
+    return {
+      x: Math.random() * c.width,
+      y: inizio ? Math.random() * c.height : c.height + 20,
+      s: Math.random() * 10 + 9,
+      v: Math.random() * .5 + .3,
+      o: Math.random() * Math.PI * 2,
+      a: Math.random() * .25 + .2
+    };
+  }
+  function ridimensiona() {
+    c.width = innerWidth; c.height = innerHeight;
+    const qf = Math.min(150, Math.floor(innerWidth / 8));
+    fiocchi = Array.from({ length: qf }, () => ({
+      x: Math.random() * c.width, y: Math.random() * c.height,
+      r: Math.random() * 3 + 1, v: Math.random() * 1 + .5,
+      o: Math.random() * Math.PI * 2
+    }));
+    const qc = Math.min(7, Math.floor(innerWidth / 160));
+    cuori = Array.from({ length: qc }, () => nuovoCuore(true));
+  }
+  addEventListener('resize', ridimensiona);
+  ridimensiona();
+
+  function disegnaCuore(x, y, s) {
+    ctx.beginPath();
+    ctx.moveTo(x, y + s * .3);
+    ctx.bezierCurveTo(x, y, x - s * .5, y, x - s * .5, y + s * .3);
+    ctx.bezierCurveTo(x - s * .5, y + s * .6, x, y + s * .75, x, y + s);
+    ctx.bezierCurveTo(x, y + s * .75, x + s * .5, y + s * .6, x + s * .5, y + s * .3);
+    ctx.bezierCurveTo(x + s * .5, y, x, y, x, y + s * .3);
+    ctx.fill();
+  }
+
+  function anima() {
+    ctx.clearRect(0, 0, c.width, c.height);
+
+    ctx.fillStyle = 'rgba(255, 255, 255, .85)';
+    for (const f of fiocchi) {
+      f.y += f.v; f.o += .01; f.x += Math.sin(f.o) * .6;
+      if (f.y > c.height) { f.y = -5; f.x = Math.random() * c.width; }
+      ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2); ctx.fill();
+    }
+
+    for (const h of cuori) {
+      h.y -= h.v; h.o += .015; h.x += Math.sin(h.o) * .5;
+      if (h.y < -30) Object.assign(h, nuovoCuore(false));
+      ctx.fillStyle = 'rgba(244, 166, 184, ' + h.a + ')';
+      disegnaCuore(h.x, h.y, h.s);
+    }
+    requestAnimationFrame(anima);
+  }
+  anima();
+</script>
+</body>
+</html>
