@@ -37,6 +37,85 @@
 
   #fx { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
 
+  /* Schermata regalo iniziale */
+  #introRegalo {
+    position: fixed; inset: 0; z-index: 10;
+    display: grid; place-items: center; padding: 24px;
+    text-align: center;
+    background:
+      radial-gradient(ellipse at 50% 35%, rgba(241, 208, 138, .16), transparent 48%),
+      linear-gradient(160deg, #1f6b43 0%, var(--verde) 48%, var(--verde-scuro) 100%);
+    transition: opacity .8s ease, visibility .8s ease;
+  }
+  #introRegalo.aperto { opacity: 0; visibility: hidden; pointer-events: none; }
+  .intro-contenuto { width: min(100%, 520px); }
+  .intro-titolo {
+    margin-bottom: 8px;
+    font: 400 clamp(2.8rem, 9vw, 4.6rem)/1.1 'Great Vibes', cursive;
+    color: var(--oro);
+    text-shadow: 0 3px 0 var(--rosso-scuro), 0 0 24px rgba(241,208,138,.3);
+  }
+  .intro-testo { font-size: clamp(1.15rem, 4vw, 1.5rem); color: var(--crema); }
+  .regalo {
+    display: grid; justify-items: center; gap: 26px;
+    margin: 28px auto 0; padding: 20px 24px;
+    border: 0; color: var(--oro); background: transparent;
+    font: 500 1.25rem 'Cormorant Garamond', serif;
+    cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .regalo:focus-visible { outline: 3px solid var(--oro); outline-offset: 8px; border-radius: 14px; }
+  .scatola {
+    position: relative; display: block;
+    width: min(62vw, 250px); height: min(48vw, 185px);
+    min-width: 190px; min-height: 145px;
+    perspective: 700px; transform-style: preserve-3d;
+    filter: drop-shadow(0 20px 22px rgba(0,0,0,.35));
+  }
+  .scatola-corpo {
+    position: absolute; inset: 32px 0 0;
+    overflow: hidden; border: 1px solid rgba(255,236,197,.55); border-radius: 7px 7px 12px 12px;
+    background: linear-gradient(135deg, #d72d48, #a50d2b 72%);
+    box-shadow: inset 0 1px 12px rgba(255,255,255,.18);
+  }
+  .scatola-corpo::before {
+    content: ''; position: absolute; top: 0; bottom: 0; left: 42%; width: 16%;
+    background: linear-gradient(90deg, #e9bd63, #fff0b5 48%, #d8a844);
+  }
+  .scatola-coperchio {
+    position: absolute; z-index: 2; top: 24px; left: -5%; width: 110%; height: 34px;
+    border: 1px solid rgba(255,236,197,.65); border-radius: 7px;
+    background: linear-gradient(180deg, #ee5366, #b91532);
+    box-shadow: inset 0 4px 7px rgba(255,255,255,.2), 0 5px 8px rgba(0,0,0,.2);
+    transform-origin: 50% 100%; transition: transform .85s cubic-bezier(.2,.8,.2,1), opacity .7s ease;
+  }
+  .scatola-coperchio::after {
+    content: ''; position: absolute; inset: 0 auto 0 42%; width: 16%;
+    background: linear-gradient(90deg, #e9bd63, #fff0b5 48%, #d8a844);
+  }
+  .fiocco {
+    position: absolute; z-index: 3; top: -11px; left: 50%;
+    width: 28px; height: 20px; border-radius: 6px;
+    background: linear-gradient(135deg, #fff0b5, #d8a844);
+    transform: translateX(-50%); transition: transform .75s ease, opacity .55s ease;
+  }
+  .fiocco::before, .fiocco::after {
+    content: ''; position: absolute; top: -14px; width: 48px; height: 32px;
+    border: 9px solid #e7bd66; border-radius: 50% 50% 12px 50%;
+    box-shadow: inset 0 0 0 2px rgba(255,240,181,.5);
+  }
+  .fiocco::before { right: 12px; transform: rotate(25deg); }
+  .fiocco::after { left: 12px; transform: scaleX(-1) rotate(25deg); }
+  #introRegalo.in-apertura .scatola-coperchio { transform: translate(24px, -92px) rotate(22deg); opacity: .7; }
+  #introRegalo.in-apertura .fiocco { transform: translate(-50%, -105px) rotate(18deg) scale(.75); opacity: 0; }
+  .regalo:disabled { cursor: default; }
+  main { opacity: 0; transform: translateY(14px); transition: opacity .9s ease, transform .9s ease; }
+  body.pagina-pronta main { opacity: 1; transform: translateY(0); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+    #introRegalo, main, .scatola-coperchio, .fiocco { transition-duration: .01ms !important; }
+  }
+
   /* Luci natalizie colorate */
   .luci {
     position: fixed; top: 0; left: 0; right: 0; height: 50px;
@@ -128,18 +207,6 @@
   }
   video { width: 100%; height: 100%; display: block; object-fit: contain; background: #000; }
 
-  .audio-btn {
-    position: absolute; right: 14px; bottom: 14px; z-index: 4;
-    border: 0; cursor: pointer;
-    padding: 10px 20px; border-radius: 999px;
-    font: 500 1.1rem 'Cormorant Garamond', serif;
-    background: var(--oro); color: var(--rosso-scuro);
-    box-shadow: 0 4px 16px rgba(0,0,0,.45);
-    transition: transform .15s;
-  }
-  .audio-btn:hover { transform: scale(1.06); }
-  .audio-btn[hidden] { display: none; }
-
   .dedica {
     margin-top: 32px;
     font-family: 'Great Vibes', cursive;
@@ -164,16 +231,30 @@
 <canvas id="fx"></canvas>
 <div class="collina"></div>
 
-<main>
-  <h1><span class="albero">🎄</span> Calendario dell'Avvento <span class="albero">🎄</span></h1>
+<section id="introRegalo" role="dialog" aria-modal="true" aria-labelledby="introTitolo">
+  <div class="intro-contenuto">
+    <h2 class="intro-titolo" id="introTitolo">Una sorpresa per te</h2>
+    <p class="intro-testo">C'è un piccolo regalo che ti aspetta…</p>
+    <button class="regalo" id="apriRegalo" type="button" aria-label="Apri il regalo">
+      <span class="scatola" aria-hidden="true">
+        <span class="scatola-corpo"></span>
+        <span class="scatola-coperchio"></span>
+        <span class="fiocco"></span>
+      </span>
+      <span>🎁 Tocca per aprire 🎁</span>
+    </button>
+  </div>
+</section>
+
+<main id="contenuto" aria-hidden="true">
+  <h1 tabindex="-1"><span class="albero">🎄</span> Calendario dell'Avvento <span class="albero">🎄</span></h1>
   <div class="divisore">❄ <span class="cuore">❤</span> ❄</div>
   <div class="giorno" id="giorno">Giorno 3</div>
 
   <div class="cornice">
     <div class="schermo">
       <!-- Metti qui il tuo video: carica il file accanto a index.html e chiamalo video.mp4 -->
-      <video id="video" src="video.mp4" autoplay muted loop playsinline controls></video>
-      <button class="audio-btn" id="audio" type="button" hidden>🔊 Attiva l'audio</button>
+      <video id="video" src="video.mp4" loop playsinline controls preload="metadata"></video>
     </div>
   </div>
 
@@ -194,18 +275,20 @@
   document.getElementById('dedica').textContent = DEDICA;
   document.title = "Calendario dell'Avvento – Giorno " + giorno;
 
-  /* ====== VIDEO ======
-     Parte da solo senza audio (regola dei browser); il tasto attiva il sonoro. */
-  const video = document.getElementById('video');
-  const btnAudio = document.getElementById('audio');
-  const avvia = video.play();
-  if (avvia && avvia.catch) avvia.catch(() => {});
-  btnAudio.hidden = false;
-  btnAudio.addEventListener('click', () => {
-    video.muted = false;
-    video.currentTime = 0;
-    video.play();
-    btnAudio.hidden = true;
+  /* ====== SCHERMATA REGALO ====== */
+  const intro = document.getElementById('introRegalo');
+  const apriRegalo = document.getElementById('apriRegalo');
+  const contenuto = document.getElementById('contenuto');
+  apriRegalo.addEventListener('click', () => {
+    apriRegalo.disabled = true;
+    intro.classList.add('in-apertura');
+    document.body.classList.add('pagina-pronta');
+    contenuto.setAttribute('aria-hidden', 'false');
+    window.setTimeout(() => {
+      intro.classList.add('aperto');
+      intro.setAttribute('aria-hidden', 'true');
+      document.querySelector('h1').focus({ preventScroll: true });
+    }, 850);
   });
 
   /* ====== LUCI ====== */
